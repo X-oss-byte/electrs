@@ -51,6 +51,9 @@ const TTL_SHORT: u32 = 10; // ttl for volatie resources
 const TTL_MEMPOOL_RECENT: u32 = 5; // ttl for GET /mempool/recent
 const CONF_FINAL: usize = 10; // reorgs deeper than this are considered unlikely
 
+// internal api prefix
+const INTERNAL_PREFIX: &str = "internal-api";
+
 #[derive(Serialize, Deserialize)]
 struct BlockValue {
     id: String,
@@ -1129,7 +1132,14 @@ fn handle_request(
         (&Method::GET, Some(&"mempool"), Some(&"txids"), None, None, None) => {
             json_response(query.mempool().txids(), TTL_SHORT)
         }
-        (&Method::GET, Some(&"mempool"), Some(&"txs"), Some(&"all"), None, None) => {
+        (
+            &Method::GET,
+            Some(&INTERNAL_PREFIX),
+            Some(&"mempool"),
+            Some(&"txs"),
+            Some(&"all"),
+            None,
+        ) => {
             let txs = query
                 .mempool()
                 .txs()
@@ -1139,7 +1149,7 @@ fn handle_request(
 
             json_response(prepare_txs(txs, query, config), TTL_SHORT)
         }
-        (&Method::POST, Some(&"mempool"), Some(&"txs"), None, None, None) => {
+        (&Method::POST, Some(&INTERNAL_PREFIX), Some(&"mempool"), Some(&"txs"), None, None) => {
             let txid_strings: Vec<String> =
                 serde_json::from_slice(&body).map_err(|err| HttpError::from(err.to_string()))?;
 
@@ -1162,7 +1172,14 @@ fn handle_request(
                 Err(err) => http_message(StatusCode::BAD_REQUEST, err.to_string(), 0),
             }
         }
-        (&Method::GET, Some(&"mempool"), Some(&"txs"), last_seen_txid, None, None) => {
+        (
+            &Method::GET,
+            Some(&INTERNAL_PREFIX),
+            Some(&"mempool"),
+            Some(&"txs"),
+            last_seen_txid,
+            None,
+        ) => {
             let last_seen_txid = last_seen_txid.and_then(|txid| Txid::from_hex(txid).ok());
             let txs = query
                 .mempool()
