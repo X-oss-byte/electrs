@@ -26,7 +26,7 @@ def main():
         script_hash = hashlib.sha256(script).digest()[::-1].hex()
         reply = conn.call('blockchain.scripthash.get_balance', script_hash)
         result = reply['result']
-        print('{} has {} satoshis'.format(addr, result))
+        print(f'{addr} has {result} satoshis')
 
 
 if __name__ == '__main__':
