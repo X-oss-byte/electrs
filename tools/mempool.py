@@ -22,10 +22,7 @@ class Daemon:
                for params in params_list]
         request = json.dumps(obj)
 
-        msg = ('POST / HTTP/1.1\n'
-               'Authorization: Basic {}\n'
-               'Content-Length: {}\n\n'
-               '{}'.format(self.cookie, len(request), request))
+        msg = f'POST / HTTP/1.1\nAuthorization: Basic {self.cookie}\nContent-Length: {len(request)}\n\n{request}'
         self.sock.sendall(msg.encode('ascii'))
 
         status = self.fd.readline().strip()
@@ -70,7 +67,7 @@ def main():
     plt.semilogy(vsize / 1e6, rate, '-')
     plt.xlabel('Mempool size (MB)')
     plt.ylabel('Fee rate (sat/vbyte)')
-    plt.title('{} transactions'.format(len(entries)))
+    plt.title(f'{len(entries)} transactions')
     plt.grid()
     plt.show()
 
