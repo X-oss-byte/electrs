@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim AS base
+FROM debian:12.5-slim AS base
 
 RUN apt update -qy
 RUN apt install -qy librocksdb-dev
